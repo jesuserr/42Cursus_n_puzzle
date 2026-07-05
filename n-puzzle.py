@@ -1,5 +1,19 @@
 import sys
-from sys import argv
+import argparse
+
+def check_puzzle_solvability(size, puzzle):
+    print("Checking puzzle solvability...")
+
+
+def parse_arguments():
+    arg_parser = argparse.ArgumentParser(
+        usage="python3 n-puzzle.py [board] [-h]",
+        description="starting board default name: 'board'",
+    )
+    arg_parser.add_argument('board', nargs='?', default='board')
+    args = arg_parser.parse_args()
+    return args
+
 
 def read_puzzle_file(filename):
     """Parse an n-puzzle file: line 0 is a comment, line 1 is the size,
@@ -7,7 +21,7 @@ def read_puzzle_file(filename):
     0..size*size-1 exactly once. Trailing '#' tokens in a row are comments.
     Returns (size, flat list of ints). Raises ValueError on any format issue.
     """
-    print("Reading puzzle file...")
+    print(f'Reading starting board from file "{filename}"')
     try:
         with open(filename) as f:
             contents_str = f.read()
@@ -38,9 +52,9 @@ def read_puzzle_file(filename):
 
 
 def main():
-    # parser
+    args = parse_arguments()
     try:
-        size, contents = read_puzzle_file(argv[1])
+        size, contents = read_puzzle_file(args.board)
         print(f"Puzzle size: {size}")
         print(f"Puzzle contents: {contents}")
     except ValueError as error:
