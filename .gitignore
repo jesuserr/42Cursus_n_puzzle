@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+notas
+claude/IMPLEMENTATION.md
+claude/main.py
+claude/PLAN.md
+claude/puzzle.py
+claude/solver.py
