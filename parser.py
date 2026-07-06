@@ -1,8 +1,7 @@
-import sys
 import argparse
 
-def check_puzzle_solvability(size, puzzle):
-    print("Checking puzzle solvability...")
+PASS_MARK = '\033[32m✓\033[0m'
+FAIL_MARK = '\033[31m✗\033[0m'
 
 
 def parse_arguments():
@@ -21,7 +20,7 @@ def read_puzzle_file(filename):
     0..size*size-1 exactly once. Trailing '#' tokens in a row are comments.
     Returns (size, flat list of ints). Raises ValueError on any format issue.
     """
-    print(f'Reading starting board from file "{filename}"')
+    print(f'Reading starting board from file "{filename}" ', end="")
     try:
         with open(filename) as f:
             contents_str = f.read()
@@ -47,23 +46,7 @@ def read_puzzle_file(filename):
         if set(puzzle_ints) != set(range(size * size)):
             raise ValueError(f"File '{filename}' is not a valid n-puzzle file.")
     except (OSError, ValueError) as e:
+        print(f"{FAIL_MARK}")
         raise ValueError(f"Error: {e}")
+    print(f"{PASS_MARK}")
     return size, puzzle_ints
-
-
-def main():
-    args = parse_arguments()
-    try:
-        size, contents = read_puzzle_file(args.board)
-        print(f"Puzzle size: {size}")
-        print(f"Puzzle contents: {contents}")
-    except ValueError as error:
-        print(f"{error}")
-        sys.exit(1)
-    except KeyboardInterrupt:
-        print("\nProgram interrupted by user")
-        sys.exit(0)
-
-
-if __name__ == "__main__":
-    main()
