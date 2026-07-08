@@ -6,11 +6,16 @@ FAIL_MARK = '\033[31m✗\033[0m'
 
 def parse_arguments():
     arg_parser = argparse.ArgumentParser(
-        usage="python3 n-puzzle.py [board] [-h]",
+        usage="python3 n-puzzle.py [board] [-h] [-r size]",
         description="starting board default name: 'board'",
     )
     arg_parser.add_argument('board', nargs='?', default='board')
+    arg_parser.add_argument('-r', type=int, metavar='size', dest='random',
+                            help='generate random solvable puzzle of given size')
     args = arg_parser.parse_args()
+    if args.random is not None and args.random < 3:
+        print(f"Size must be at least 3 for a valid n-puzzle {FAIL_MARK}")
+        exit(1)
     return args
 
 
