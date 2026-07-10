@@ -7,11 +7,17 @@ FAIL_MARK = '\033[31m✗\033[0m'
 def parse_arguments():
     arg_parser = argparse.ArgumentParser(
         usage="python3 n-puzzle.py [board] [-h] [-r size]",
-        description="starting board default name: 'board'",
+        description="Solves N-puzzle using A* search algorithm:\n"
+                    "- with no arguments reads puzzle from default file\n"
+                    "  'board' and applies default Manhattan distance\n"
+                    "  heuristic\n"
+                    "- with -r <size> generates a random solvable puzzle\n"
+                    "  instead, ignoring any board file argument\n",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     arg_parser.add_argument('board', nargs='?', default='board')
     arg_parser.add_argument('-r', type=int, metavar='size', dest='random',
-                            help='generate random solvable puzzle of given size')
+                            help='generate random solvable puzzle of <size>')
     args = arg_parser.parse_args()
     if args.random is not None and args.random < 3:
         print(f"Size must be at least 3 for a valid n-puzzle {FAIL_MARK}")
@@ -33,23 +39,23 @@ def read_puzzle_file(filename):
             raise ValueError(f"File '{filename}' is empty.")
         contents_list = contents_str.strip().splitlines()
         if len(contents_list) < 5:
-            raise ValueError(f"File '{filename}' is not a valid n-puzzle file.")
+            raise ValueError(f"File '{filename}' not valid n-puzzle file.")
         if not contents_list[1].isdigit() or int(contents_list[1]) < 3:
-            raise ValueError(f"File '{filename}' is not a valid n-puzzle file.")
+            raise ValueError(f"File '{filename}' not valid n-puzzle file.")
         size = int(contents_list[1])
         if len(contents_list) != size + 2:
-            raise ValueError(f"File '{filename}' is not a valid n-puzzle file.")
+            raise ValueError(f"File '{filename}' not valid n-puzzle file.")
         puzzle = []
         for line in contents_list[2:]:
             numbers = line.split()
             if numbers and numbers[-1].startswith('#'):
                 numbers = numbers[:-1]
             if len(numbers) != size:
-                raise ValueError(f"File '{filename}' is not a valid n-puzzle file.")
+                raise ValueError(f"File '{filename}' not valid n-puzzle file.")
             puzzle += numbers
         puzzle_ints = [int(x) for x in puzzle]
         if set(puzzle_ints) != set(range(size * size)):
-            raise ValueError(f"File '{filename}' is not a valid n-puzzle file.")
+            raise ValueError(f"File '{filename}' not valid n-puzzle file.")
     except (OSError, ValueError) as e:
         print(f"{FAIL_MARK}")
         raise ValueError(f"Error: {e}")
