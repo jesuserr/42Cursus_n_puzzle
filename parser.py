@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 PASS_MARK = '\033[32m✓\033[0m'
 FAIL_MARK = '\033[31m✗\033[0m'
@@ -6,22 +7,30 @@ FAIL_MARK = '\033[31m✗\033[0m'
 
 def parse_arguments():
     arg_parser = argparse.ArgumentParser(
-        usage="python3 n-puzzle.py [board] [-h] [-r size]",
+        usage="python3 n-puzzle.py [board] [-h] [-r size] [-hf heuristic]",
         description="Solves N-puzzle using A* search algorithm:\n"
                     "- with no arguments reads puzzle from default file\n"
                     "  'board' and applies default Manhattan distance\n"
                     "  heuristic\n"
                     "- with -r <size> generates a random solvable puzzle\n"
-                    "  instead, ignoring any board file argument\n",
+                    "  instead, ignoring any board file argument\n"
+                    "- with -hf <heuristic> uses the specified heuristic\n"
+                    "  function instead of the default Manhattan distance\n"
+                    "  heuristic function",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     arg_parser.add_argument('board', nargs='?', default='board')
-    arg_parser.add_argument('-r', type=int, metavar='size', dest='random',
+    arg_parser.add_argument('-r', type=int, metavar=' <size>', dest='random',
                             help='generate random solvable puzzle of <size>')
+    arg_parser.add_argument('-hf', choices=['manhattan', 'hamming'],
+                            metavar='<heuristic>', dest='heuristic',
+                            default='manhattan',
+                            help="use specified <heuristic> function: "
+                                 "'manhattan' or 'hamming'")
     args = arg_parser.parse_args()
     if args.random is not None and args.random < 3:
         print(f"Size must be at least 3 for a valid n-puzzle {FAIL_MARK}")
-        exit(1)
+        sys.exit(1)
     return args
 
 

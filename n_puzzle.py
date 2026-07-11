@@ -20,8 +20,10 @@ def main():
         print(f"Puzzle size: {size}")
         print(f"Puzzle board: {board}")
         print(f"Goal state:   {goal_state}")
-        print(f"Hamming distance: {hamming_distance(board, goal_state)}")
-        print(f"Manhattan distance: {manhattan_distance(board, goal_state, size)}")
+        if args.heuristic == 'hamming':
+            print(f"Hamming distance: {hamming_distance(board, goal_state)}")
+        elif args.heuristic == 'manhattan':
+            print(f"Manhattan distance: {manhattan_distance(board, goal_state, size)}")
     except ValueError as error:
         print(f"{error}")
         sys.exit(1)
