@@ -1,4 +1,6 @@
-def hamming_distance(state, goal_state):
+# Counts tiles that are out of place (blank excluded).
+# `size` is unused; kept so both heuristics share one call signature.
+def hamming_distance(state, goal_state, size):
     paired_tiles = zip(state, goal_state)
     misplaced_tiles_count = 0
     for s, g in paired_tiles:
@@ -7,6 +9,9 @@ def hamming_distance(state, goal_state):
     return misplaced_tiles_count
 
 
+# Sums each tile's grid distance (row+column offset) from its goal
+# position (blank excluded). Needs `size` to convert flat indices
+# into 2D row/column coordinates.
 def manhattan_distance(state, goal_state, size):
     manhattan_distance_sum = 0
     for i in range(len(state)):

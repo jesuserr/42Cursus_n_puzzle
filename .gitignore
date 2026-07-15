@@ -222,6 +222,6 @@ claude/main.py
 claude/PLAN.md
 claude/puzzle.py
 claude/solver.py
-board
+board*
 annotations/solvability_algorithm.md
 annotations/solvability_study.md
