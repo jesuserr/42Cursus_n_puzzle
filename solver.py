@@ -6,6 +6,11 @@ from prints import print_initial_state, print_solution
 counter = count()
 
 
+# Rebuild the solution as an ordered list of boards from start to goal.
+# came_from maps each board to the board it was reached from; the start board
+# maps to None. Starting at goal_board, we follow those parent links backwards
+# until we hit None, collecting boards goal -> start, then reverse the list so
+# it reads start -> goal.
 def reconstruct_path(came_from, goal_board):
     final_path = []
     current_board = goal_board
