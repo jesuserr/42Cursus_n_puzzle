@@ -2,10 +2,27 @@ import heapq
 from itertools import count
 from constants import FAIL_MARK
 from exceptions import GoalReached, NoSolutionFound
+from prints import print_initial_state, print_solution
 counter = count()
 
 
-def possible_moves(open_set, closed_set, size, heuristic, goal_state):
+# Record new_board's parent, score it, and either raise GoalReached (if it's
+# the goal) or push it onto open_set. Skips new_board entirely if it's
+# already in closed_set.
+def consider_neighbor(new_board, board, closed_set, came_from, heuristic,
+                      goal_state, size, g_cost, open_set):
+    if tuple(new_board) in closed_set:
+        return
+    came_from[tuple(new_board)] = tuple(board)
+    h_cost = heuristic(new_board, goal_state, size)
+    if h_cost == 0:
+        closed_set.add(tuple(new_board))
+        raise GoalReached("Goal state reached")
+    heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter),
+                   new_board))
+
+
+def expand_board(open_set, closed_set, size, heuristic, goal_state, came_from):
     f_cost, h_cost, _, board = heapq.heappop(open_set)
     g_cost = f_cost - h_cost + 1
     closed_set.add(tuple(board))
@@ -15,97 +32,45 @@ def possible_moves(open_set, closed_set, size, heuristic, goal_state):
         new_board = board.copy()
         new_board[zero_position] = new_board[zero_position - 1]
         new_board[zero_position - 1] = 0
-        if tuple(new_board) not in closed_set:
-            h_cost = heuristic(new_board, goal_state, size)
-            if h_cost == 0:
-                closed_set.add(tuple(new_board))
-                raise GoalReached("Goal state reached")
-            heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter), new_board))
-            print(f"New board, f_cost, g_cost, h_cost: {new_board}, {g_cost + h_cost}, {g_cost}, {h_cost}")
+        consider_neighbor(new_board, board, closed_set, came_from, heuristic,
+                          goal_state, size, g_cost, open_set)
     if zero_position_x < size - 1:
         new_board = board.copy()
         new_board[zero_position] = new_board[zero_position + 1]
         new_board[zero_position + 1] = 0
-        if tuple(new_board) not in closed_set:
-            h_cost = heuristic(new_board, goal_state, size)
-            if h_cost == 0:
-                closed_set.add(tuple(new_board))
-                raise GoalReached("Goal state reached")
-            heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter), new_board))
-            print(f"New board, f_cost, g_cost, h_cost: {new_board}, {g_cost + h_cost}, {g_cost}, {h_cost}")
+        consider_neighbor(new_board, board, closed_set, came_from, heuristic,
+                          goal_state, size, g_cost, open_set)
     if zero_position_y > 0:
         new_board = board.copy()
         new_board[zero_position] = new_board[zero_position - size]
         new_board[zero_position - size] = 0
-        if tuple(new_board) not in closed_set:
-            h_cost = heuristic(new_board, goal_state, size)
-            if h_cost == 0:
-                closed_set.add(tuple(new_board))
-                raise GoalReached("Goal state reached")
-            heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter), new_board))
-            print(f"New board, f_cost, g_cost, h_cost: {new_board}, {g_cost + h_cost}, {g_cost}, {h_cost}")
+        consider_neighbor(new_board, board, closed_set, came_from, heuristic,
+                          goal_state, size, g_cost, open_set)
     if zero_position_y < size - 1:
         new_board = board.copy()
         new_board[zero_position] = new_board[zero_position + size]
         new_board[zero_position + size] = 0
-        if tuple(new_board) not in closed_set:
-            h_cost = heuristic(new_board, goal_state, size)
-            if h_cost == 0:
-                closed_set.add(tuple(new_board))
-                raise GoalReached("Goal state reached")
-            heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter), new_board))
-            print(f"New board, f_cost, g_cost, h_cost: {new_board}, {g_cost + h_cost}, {g_cost}, {h_cost}")
+        consider_neighbor(new_board, board, closed_set, came_from, heuristic,
+                          goal_state, size, g_cost, open_set)
 
 
 def solve_puzzle(size, board, goal_state, heuristic):
-    print(f"\nPuzzle size: {size}")
-    print(f"Puzzle board: {board}")
-    print(f"Goal state:   {goal_state}")
-    print(f"Heuristic:   {heuristic.__name__}\n")
-
+    print_initial_state(size, board, goal_state, heuristic)
     open_set = []
     closed_set = set()
+    came_from = {tuple(board): None}
     g_cost = 0
     h_cost = heuristic(board, goal_state, size)
     heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter), board))
     while open_set:
         try:
-            possible_moves(open_set, closed_set, size, heuristic, goal_state)
-            print("\n")
+            expand_board(open_set, closed_set, size, heuristic, goal_state,
+                         came_from)
         except GoalReached:
             break
     else:
         raise NoSolutionFound(f"No solution found {FAIL_MARK} ")
-    print("Iter count: ", next(counter))
-    print("closed set: ", closed_set)
-    print("closed set length: ", len(closed_set))
-    print("open set length: ", len(open_set))
-
-
-    """
-    #heapq.heappush(open_set, (f_cost, h_cost, next(counter), board))
-    heapq.heappush(open_set, (8, 7, next(counter), [2,0,3,1,4,5,8,7,6]))
-    heapq.heappush(open_set, (6, 5, next(counter), [1,2,3,0,4,5,8,7,6]))
-    closed_set.add(tuple(heapq.heappop(open_set)[-1])) #better unpack it
-    #print(heapq.heappop(open_set))
-    heapq.heappush(open_set, (8, 6, next(counter), [1,2,3,4,0,5,8,7,6]))
-    heapq.heappush(open_set, (6, 4, next(counter), [1,2,3,8,4,5,0,7,6]))
-    print(heapq.heappop(open_set))
-    heapq.heappush(open_set, (6, 3, next(counter), [1,2,3,8,4,5,7,0,6]))
-    print(heapq.heappop(open_set))
-    #heapq.heappush(open_set, (f_cost, neighbors[0]))
-    #print(heapq.heappop(open_set))
-    print(f"Closed set: {closed_set}")
-    #f_cost, h_cost, tie_breaker, board = heapq.heappop(open_set)
-    #closed_set.add(tuple(board))"""
-    """
-    print(f"\nInitial board: {board}")
-    print(f"Initial heuristic value: {h_cost}")
-    print(f"Initial g_cost: {g_cost}")
-    print(f"Initial f(n) = g(n) + h(n): {f_cost}")
-    print(f"Initial open set: {open_set}")
-    print(f"Initial closed set: {closed_set}")"""
-
+    print_solution(came_from, closed_set, open_set)
 
 # heapq (open set)    →  always gives you the cheapest unexplored node O(log n)
 # set() (closed set)  →  instantly tells you if a node was already seen O(1)
