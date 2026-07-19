@@ -1,8 +1,11 @@
 import random
 from solvability import check_puzzle_solvability
-from parser import PASS_MARK
+from constants import PASS_MARK
 
 
+# Build the goal state: numbers 1..size*size-1 spiraling clockwise
+# inward from the top-left corner, with the blank (0) as the last cell
+# the spiral would have filled.
 def build_snail_goal(size):
     snail_board_goal = [0] * (size * size)
     top, bottom, left, right = 0, size - 1, 0, size - 1
@@ -30,6 +33,8 @@ def build_snail_goal(size):
     return snail_board_goal
 
 
+# Shuffle a board of the given size until it's solvable against the
+# snail goal state. Returns (size, board, goal_state).
 def generate_random_puzzle(size):
     goal_state = build_snail_goal(size)
     print(f'Generating random [{size}x{size}] solvable puzzle ', end='')

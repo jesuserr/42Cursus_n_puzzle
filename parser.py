@@ -1,8 +1,6 @@
 import argparse
 import sys
-
-PASS_MARK = '\033[32m✓\033[0m'
-FAIL_MARK = '\033[31m✗\033[0m'
+from constants import PASS_MARK, FAIL_MARK
 
 
 def parse_arguments():
@@ -34,12 +32,11 @@ def parse_arguments():
     return args
 
 
+# Parse an n-puzzle file: line 0 is a comment, line 1 is the size,
+# followed by `size` rows of `size` space-separated integers covering
+# 0..size*size-1 exactly once. Trailing '#' tokens in a row are comments.
+# Returns (size, flat list of ints). Raises ValueError on any format issue.
 def read_puzzle_file(filename):
-    """Parse an n-puzzle file: line 0 is a comment, line 1 is the size,
-    followed by `size` rows of `size` space-separated integers covering
-    0..size*size-1 exactly once. Trailing '#' tokens in a row are comments.
-    Returns (size, flat list of ints). Raises ValueError on any format issue.
-    """
     print(f'Reading starting board from file "{filename}" ', end="")
     try:
         with open(filename) as f:

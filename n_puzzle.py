@@ -1,11 +1,17 @@
 import sys
 from solvability import check_puzzle_solvability
-from parser import parse_arguments, read_puzzle_file, PASS_MARK, FAIL_MARK
+from parser import parse_arguments, read_puzzle_file
+from constants import PASS_MARK, FAIL_MARK
 from generator import generate_random_puzzle, build_snail_goal
 from heuristics import hamming_distance, manhattan_distance
-from solver import puzzle_solver
+from solver import solve_puzzle
+from exceptions import NoSolutionFound
 
 
+# Build the initial board/goal_state from a file or -r random generation,
+# checking solvability for the file case (generated puzzles are always
+# solvable by construction), then resolve the -hf choice to its heuristic
+# function. Returns (size, board, goal_state, heuristic).
 def setup_puzzle(args):
     if args.random is None:
         size, board = read_puzzle_file(args.board)
@@ -27,8 +33,8 @@ def main():
     args = parse_arguments()
     try:
         size, board, goal_state, heuristic = setup_puzzle(args)
-        puzzle_solver(size, board, goal_state, heuristic)
-    except ValueError as error:
+        solve_puzzle(size, board, goal_state, heuristic)
+    except (ValueError, NoSolutionFound) as error:
         print(f"{error}")
         sys.exit(1)
     except KeyboardInterrupt:
