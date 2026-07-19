@@ -5,10 +5,10 @@ def print_initial_state(size, board, goal_state, heuristic):
     print(f"Heuristic:    {heuristic.__name__}\n")
 
 
-def print_solution(came_from, closed_set, open_set):
-    print("\nSolution path:")
-    for each in came_from:
-        print(each, " : ", came_from[each])
-    # print("closed set: ", closed_set)
-    print("closed set length: ", len(closed_set))
-    print("open set length: ", len(open_set))
+def print_solution(closed_set, open_set, final_path):
+    print("Solution path:")
+    for state in final_path:
+        print(state)
+    print("Solution found in ", len(final_path) - 1, " moves.")
+    print("Closed set length: ", len(closed_set))
+    print("Open set length: ", len(open_set))

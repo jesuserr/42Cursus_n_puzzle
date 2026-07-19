@@ -6,6 +6,16 @@ from prints import print_initial_state, print_solution
 counter = count()
 
 
+def reconstruct_path(came_from, goal_board):
+    final_path = []
+    current_board = goal_board
+    while current_board is not None:
+        final_path.append(current_board)
+        current_board = came_from[current_board]
+    final_path.reverse()
+    return final_path
+
+
 # Record new_board's parent, score it, and either raise GoalReached (if it's
 # the goal) or push it onto open_set. Skips new_board entirely if it's
 # already in closed_set.
@@ -17,7 +27,7 @@ def consider_neighbor(new_board, board, closed_set, came_from, heuristic,
     h_cost = heuristic(new_board, goal_state, size)
     if h_cost == 0:
         closed_set.add(tuple(new_board))
-        raise GoalReached("Goal state reached")
+        raise GoalReached(tuple(new_board))
     heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter),
                    new_board))
 
@@ -66,11 +76,10 @@ def solve_puzzle(size, board, goal_state, heuristic):
         try:
             expand_board(open_set, closed_set, size, heuristic, goal_state,
                          came_from)
-        except GoalReached:
+        except GoalReached as reached:
+            goal_board = reached.args[0]
             break
     else:
         raise NoSolutionFound(f"No solution found {FAIL_MARK} ")
-    print_solution(came_from, closed_set, open_set)
-
-# heapq (open set)    →  always gives you the cheapest unexplored node O(log n)
-# set() (closed set)  →  instantly tells you if a node was already seen O(1)
+    final_path = reconstruct_path(came_from, goal_board)
+    print_solution(closed_set, open_set, final_path)
