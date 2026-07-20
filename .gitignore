@@ -225,3 +225,4 @@ claude/solver.py
 board*
 annotations/solvability_algorithm.md
 annotations/solvability_study.md
+docs/astar.md
