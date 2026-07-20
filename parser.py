@@ -1,6 +1,9 @@
 import argparse
 import sys
 from constants import PASS_MARK, FAIL_MARK
+MIN_SIZE = 3                            # 3x3 is the smallest legal n-puzzle
+HEADER_LINES = 2                        # comment line + size line
+FILE_MIN_LINES = HEADER_LINES + MIN_SIZE    # header + 3 rows
 
 
 def parse_arguments():
@@ -26,16 +29,19 @@ def parse_arguments():
                             help="use specified <heuristic> function: "
                                  "'manhattan' or 'hamming'")
     args = arg_parser.parse_args()
-    if args.random is not None and args.random < 3:
-        print(f"Size must be at least 3 for a valid n-puzzle {FAIL_MARK}")
+    if args.random is not None and args.random < MIN_SIZE:
+        print(f"Size must be at least {MIN_SIZE} for a valid n-puzzle "
+              f"{FAIL_MARK}")
         sys.exit(1)
     return args
 
 
 # Parse an n-puzzle file: line 0 is a comment, line 1 is the size,
 # followed by `size` rows of `size` space-separated integers covering
-# 0..size*size-1 exactly once. Trailing '#' tokens in a row are comments.
-# Returns (size, flat list of ints). Raises ValueError on any format issue.
+# 0..size*size-1 exactly once. A row may end with one '#' token, dropped as
+# a comment; more than one breaks the `size` count and is rejected.
+# Returns (size, flat list of ints). Raises ValueError on any problem, format
+# errors and OSError alike, so callers only ever catch ValueError.
 def read_puzzle_file(filename):
     print(f'Reading starting board from file "{filename}" ', end="")
     try:
@@ -44,15 +50,15 @@ def read_puzzle_file(filename):
         if not contents_str:
             raise ValueError(f"File '{filename}' is empty.")
         contents_list = contents_str.strip().splitlines()
-        if len(contents_list) < 5:
+        if len(contents_list) < FILE_MIN_LINES:
             raise ValueError(f"File '{filename}' not valid n-puzzle file.")
-        if not contents_list[1].isdigit() or int(contents_list[1]) < 3:
+        if not contents_list[1].isdigit() or int(contents_list[1]) < MIN_SIZE:
             raise ValueError(f"File '{filename}' not valid n-puzzle file.")
         size = int(contents_list[1])
-        if len(contents_list) != size + 2:
+        if len(contents_list) != size + HEADER_LINES:
             raise ValueError(f"File '{filename}' not valid n-puzzle file.")
         puzzle = []
-        for line in contents_list[2:]:
+        for line in contents_list[HEADER_LINES:]:
             numbers = line.split()
             if numbers and numbers[-1].startswith('#'):
                 numbers = numbers[:-1]
