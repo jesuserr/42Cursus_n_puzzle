@@ -23,11 +23,12 @@ def parse_arguments():
     arg_parser.add_argument('board', nargs='?', default='board')
     arg_parser.add_argument('-r', type=int, metavar=' <size>', dest='random',
                             help='generate random solvable puzzle of <size>')
-    arg_parser.add_argument('-hf', choices=['manhattan', 'hamming'],
+    arg_parser.add_argument('-hf',
+                            choices=['manhattan', 'hamming', 'linear'],
                             metavar='<heuristic>', dest='heuristic',
                             default='manhattan',
                             help="use specified <heuristic> function: "
-                                 "'manhattan' or 'hamming'")
+                                 "'manhattan', 'hamming' or 'linear'")
     args = arg_parser.parse_args()
     if args.random is not None and args.random < MIN_SIZE:
         print(f"Size must be at least {MIN_SIZE} for a valid n-puzzle "

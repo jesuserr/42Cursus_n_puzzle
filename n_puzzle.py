@@ -3,7 +3,7 @@ from solvability import check_puzzle_solvability
 from parser import parse_arguments, read_puzzle_file
 from constants import PASS_MARK, FAIL_MARK
 from generator import generate_random_puzzle, build_snail_goal
-from heuristics import hamming_distance, manhattan_distance
+from heuristics import hamming_distance, manhattan_distance, linear_conflict
 from solver import solve_puzzle
 from exceptions import NoSolutionFound
 
@@ -26,6 +26,8 @@ def setup_puzzle(args):
         heuristic = hamming_distance
     elif args.heuristic == 'manhattan':
         heuristic = manhattan_distance
+    elif args.heuristic == 'linear':
+        heuristic = linear_conflict
     return size, board, goal_state, heuristic
 
 

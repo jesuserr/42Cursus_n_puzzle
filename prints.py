@@ -1,3 +1,7 @@
+# Print a header summarizing the puzzle before the search starts: its size,
+# the starting board, the goal board and which heuristic is in use. board and
+# goal_state are printed as their raw flat lists (not size x size squares) so
+# the header stays compact.
 def print_initial_state(size, board, goal_state, heuristic):
     print(f"\nPuzzle size:   {size} x {size}")
     print(f"Initial state: {board}")
@@ -7,7 +11,7 @@ def print_initial_state(size, board, goal_state, heuristic):
 
 # Print a single state as a size x size grid, right-aligning every cell to the
 # width of the largest tile so columns line up regardless of puzzle size.
-def print_board(state, size):
+def _print_board(state, size):
     width = len(str(size * size - 1))
     for row in range(size):
         cells = state[row * size:(row + 1) * size]
@@ -22,7 +26,7 @@ def print_board(state, size):
 def print_solution(final_path, size, time_complexity, size_complexity):
     print("Solution sequence (initial -> goal):")
     for state in final_path:
-        print_board(state, size)
+        _print_board(state, size)
         print()
     print(f"Number of moves:                        {len(final_path) - 1}")
     print(f"Time complexity (states selected):      {time_complexity}")
