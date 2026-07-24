@@ -20,7 +20,7 @@ def print_board(state, size):
 # state), the time complexity (total states selected from the open set) and
 # the size complexity (peak number of states held in memory at once).
 def print_solution(final_path, size, time_complexity, size_complexity):
-    print("\nSolution sequence (initial -> goal):")
+    print("Solution sequence (initial -> goal):")
     for state in final_path:
         print_board(state, size)
         print()
