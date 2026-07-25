@@ -2,7 +2,7 @@ import heapq
 from itertools import count
 from constants import FAIL_MARK
 from exceptions import GoalReached, NoSolutionFound
-from prints import print_initial_state, print_solution
+from prints import print_solution
 counter = count()
 
 
@@ -47,10 +47,8 @@ def _consider_neighbor(new_board, board, closed_set, came_from, heuristic,
 # is what _consider_neighbor scores the neighbors with.
 #
 # A board is added to closed_set the moment it is popped, meaning "already
-# expanded, never look at it again". Note this is why solve_puzzle needs its
-# h_cost == 0 shortcut: if the initial board is already the goal, it gets
-# closed here and _consider_neighbor's closed_set check would then hide it
-# forever, since the goal is only ever detected when it is generated.
+# expanded, never look at it again". There is no goal test here: the goal is
+# detected in _consider_neighbor, the moment it is generated.
 #
 # The blank tile is what actually moves. From its (y, x) coordinates we know
 # which of the four slides are legal: the bounds checks stop the blank from
@@ -92,15 +90,11 @@ def _expand_board(open_set, closed_set, size, heuristic, goal_state,
 
 
 def solve_puzzle(size, board, goal_state, heuristic):
-    print_initial_state(size, board, goal_state, heuristic)
     open_set = []
     closed_set = set()
     came_from = {tuple(board): None}
     g_cost = 0
     h_cost = heuristic(board, goal_state, size)
-    if (h_cost == 0):
-        print_solution([board], size, 0, 1)
-        return
     heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter), board))
     max_states = len(open_set) + len(closed_set)
     while open_set:

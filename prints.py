@@ -1,12 +1,25 @@
+from constants import PASS_MARK
+# Total width, in characters, of the asterisk banners framing the output.
+BANNER_WIDTH = 60
+
+
 # Print a header summarizing the puzzle before the search starts: its size,
-# the starting board, the goal board and which heuristic is in use. board and
-# goal_state are printed as their raw flat lists (not size x size squares) so
-# the header stays compact.
-def print_initial_state(size, board, goal_state, heuristic):
-    print(f"\nPuzzle size:   {size} x {size}")
-    print(f"Initial state: {board}")
-    print(f"Goal state:    {goal_state}")
-    print(f"Heuristic:     {heuristic.__name__}\n")
+# the starting board, the goal board, the search variant and which heuristic
+# is in use. board and goal_state are drawn as size x size grids. Uniform cost
+# ignores the heuristic, so in that variant it is reported as None.
+def print_initial_state(size, board, goal_state, heuristic, variant):
+    print("\n" + " PUZZLE SETUP ".center(BANNER_WIDTH, "*"))
+    print(f"Puzzle size:   {size} x {size}\n")
+    print("Initial state:")
+    _print_board(board, size)
+    print("\nGoal state:")
+    _print_board(goal_state, size)
+    print(f"\nVariant:       {variant}")
+    if variant == 'uniform_cost':
+        print("Heuristic:     None (uniform cost search)")
+    else:
+        print(f"Heuristic:     {heuristic.__name__}")
+    print()
 
 
 # Print a single state as a size x size grid, right-aligning every cell to the
@@ -24,6 +37,8 @@ def _print_board(state, size):
 # state), the time complexity (total states selected from the open set) and
 # the size complexity (peak number of states held in memory at once).
 def print_solution(final_path, size, time_complexity, size_complexity):
+    print(" PUZZLE SOLUTION ".center(BANNER_WIDTH, "*"))
+    print(f"Solution found {PASS_MARK}")
     print("Solution sequence (initial -> goal):")
     for state in final_path:
         _print_board(state, size)

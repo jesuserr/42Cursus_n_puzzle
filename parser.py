@@ -1,8 +1,8 @@
 import argparse
 import sys
 from constants import PASS_MARK, FAIL_MARK
-MIN_SIZE = 3                            # 3x3 is the smallest legal n-puzzle
-HEADER_LINES = 2                        # comment line + size line
+MIN_SIZE = 3                                # 3x3 smallest legal n-puzzle
+HEADER_LINES = 2                            # comment line + size line
 FILE_MIN_LINES = HEADER_LINES + MIN_SIZE    # header + 3 rows
 
 
@@ -12,12 +12,14 @@ def parse_arguments():
         description="Solves N-puzzle using A* search algorithm:\n"
                     "- with no arguments reads puzzle from default file\n"
                     "  'board' and applies default Manhattan distance\n"
-                    "  heuristic\n"
+                    "  heuristic using A* search variant\n"
                     "- with -r <size> generates a random solvable puzzle\n"
                     "  instead, ignoring any board file argument\n"
                     "- with -hf <heuristic> uses the specified heuristic\n"
                     "  function instead of the default Manhattan distance\n"
-                    "  heuristic function",
+                    "  heuristic function\n"
+                    "- with -av <variant> uses the specified algorithm\n"
+                    "  variant instead of the default A* search variant",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     arg_parser.add_argument('board', nargs='?', default='board')
@@ -29,6 +31,12 @@ def parse_arguments():
                             default='manhattan',
                             help="use specified <heuristic> function: "
                                  "'manhattan', 'hamming' or 'linear'")
+    arg_parser.add_argument('-av',
+                            choices=['a_star', 'greedy', 'uniform_cost'],
+                            metavar='<variant>', dest='variant',
+                            default='a_star',
+                            help="use specified <variant> of the algorithm: "
+                                 "'a_star', 'greedy' or 'uniform_cost'")
     args = arg_parser.parse_args()
     if args.random is not None and args.random < MIN_SIZE:
         print(f"Size must be at least {MIN_SIZE} for a valid n-puzzle "

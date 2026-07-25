@@ -6,6 +6,7 @@ from generator import generate_random_puzzle, build_snail_goal
 from heuristics import hamming_distance, manhattan_distance, linear_conflict
 from solver import solve_puzzle
 from exceptions import NoSolutionFound
+from prints import print_initial_state, print_solution
 
 
 # Build the initial board/goal_state from a file or -r random generation,
@@ -35,6 +36,10 @@ def main():
     args = parse_arguments()
     try:
         size, board, goal_state, heuristic = setup_puzzle(args)
+        print_initial_state(size, board, goal_state, heuristic, args.variant)
+        if board == goal_state:
+            print_solution([board], size, 0, 1)
+            sys.exit(0)
         solve_puzzle(size, board, goal_state, heuristic)
     except (ValueError, NoSolutionFound) as error:
         print(f"{error}")
