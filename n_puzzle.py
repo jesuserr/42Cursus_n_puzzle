@@ -40,7 +40,7 @@ def main():
         if board == goal_state:
             print_solution([board], size, 0, 1)
             sys.exit(0)
-        solve_puzzle(size, board, goal_state, heuristic)
+        solve_puzzle(size, board, goal_state, heuristic, args.variant)
     except (ValueError, NoSolutionFound) as error:
         print(f"{error}")
         sys.exit(1)

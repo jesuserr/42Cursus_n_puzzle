@@ -23,32 +23,37 @@ def _reconstruct_path(came_from, goal_board):
 
 # Record new_board's parent, score it, and either raise GoalReached (if it's
 # the goal) or push it onto open_set. Skips new_board entirely if it's
-# already in closed_set.
+# already in closed_set. Uniform cost pins h to 0, leaving greedy as the only
+# variant needing an explicit f formula: with h at 0 the g + h sum already
+# gives g. Entries rank by f, then h and g, with the counter last so full
+# ties fall to insertion order and boards are never compared.
 def _consider_neighbor(new_board, board, closed_set, came_from, heuristic,
-                       goal_state, size, g_cost, open_set):
+                       goal_state, size, g_cost, open_set, variant):
     if tuple(new_board) in closed_set:
         return
     came_from[tuple(new_board)] = tuple(board)
-    h_cost = heuristic(new_board, goal_state, size)
-    if h_cost == 0:
+    if new_board == goal_state:
         closed_set.add(tuple(new_board))
         raise GoalReached(tuple(new_board))
-    heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter),
-                   new_board))
+    if variant == 'uniform_cost':
+        h_cost = 0
+    else:
+        h_cost = heuristic(new_board, goal_state, size)
+    if variant == 'greedy':
+        f_cost = h_cost
+    else:
+        f_cost = g_cost + h_cost
+    heapq.heappush(open_set, (f_cost, h_cost, g_cost,
+                   next(counter), new_board))
 
 
-# One A* iteration: take the most promising board out of open_set, mark it as
-# explored, and hand each of its neighbors to _consider_neighbor.
-#
-# The heap is ordered by f_cost, so heappop always returns the board with the
-# lowest f = g + h. We do not store g in the heap: since f and h travel
-# together in the tuple, the popped board's own g is f_cost - h_cost, and
-# every neighbor is exactly one move further away, hence the + 1. That g_cost
-# is what _consider_neighbor scores the neighbors with.
-#
-# A board is added to closed_set the moment it is popped, meaning "already
-# expanded, never look at it again". There is no goal test here: the goal is
-# detected in _consider_neighbor, the moment it is generated.
+# One search iteration: heappop takes the board the variant rates best out of
+# open_set, marks it as explored, and hands each of its neighbors to
+# _consider_neighbor. g is carried in the tuple because greedy scores f = h,
+# leaving no way to derive it; every neighbor sits one move further away,
+# hence the + 1. A board joins closed_set the moment it is popped, meaning
+# "already expanded, never look at it again", and there is no goal test here:
+# the goal is caught in _consider_neighbor as soon as it is generated.
 #
 # The blank tile is what actually moves. From its (y, x) coordinates we know
 # which of the four slides are legal: the bounds checks stop the blank from
@@ -57,9 +62,9 @@ def _consider_neighbor(new_board, board, closed_set, came_from, heuristic,
 # swaps the blank with the neighboring tile - written as two assignments
 # because one of the two values is always 0.
 def _expand_board(open_set, closed_set, size, heuristic, goal_state,
-                  came_from):
-    f_cost, h_cost, _, board = heapq.heappop(open_set)
-    g_cost = f_cost - h_cost + 1
+                  came_from, variant):
+    _, _, g_cost, _, board = heapq.heappop(open_set)
+    g_cost += 1
     closed_set.add(tuple(board))
     zero_position = board.index(0)
     zero_position_y, zero_position_x = divmod(zero_position, size)
@@ -68,39 +73,41 @@ def _expand_board(open_set, closed_set, size, heuristic, goal_state,
         new_board[zero_position] = new_board[zero_position - 1]
         new_board[zero_position - 1] = 0
         _consider_neighbor(new_board, board, closed_set, came_from, heuristic,
-                           goal_state, size, g_cost, open_set)
+                           goal_state, size, g_cost, open_set, variant)
     if zero_position_x < size - 1:                      # slide blank right
         new_board = board.copy()
         new_board[zero_position] = new_board[zero_position + 1]
         new_board[zero_position + 1] = 0
         _consider_neighbor(new_board, board, closed_set, came_from, heuristic,
-                           goal_state, size, g_cost, open_set)
+                           goal_state, size, g_cost, open_set, variant)
     if zero_position_y > 0:                             # slide blank up
         new_board = board.copy()
         new_board[zero_position] = new_board[zero_position - size]
         new_board[zero_position - size] = 0
         _consider_neighbor(new_board, board, closed_set, came_from, heuristic,
-                           goal_state, size, g_cost, open_set)
+                           goal_state, size, g_cost, open_set, variant)
     if zero_position_y < size - 1:                      # slide blank down
         new_board = board.copy()
         new_board[zero_position] = new_board[zero_position + size]
         new_board[zero_position + size] = 0
         _consider_neighbor(new_board, board, closed_set, came_from, heuristic,
-                           goal_state, size, g_cost, open_set)
+                           goal_state, size, g_cost, open_set, variant)
 
 
-def solve_puzzle(size, board, goal_state, heuristic):
+def solve_puzzle(size, board, goal_state, heuristic, variant):
     open_set = []
     closed_set = set()
     came_from = {tuple(board): None}
     g_cost = 0
-    h_cost = heuristic(board, goal_state, size)
-    heapq.heappush(open_set, (g_cost + h_cost, h_cost, next(counter), board))
+    h_cost = (0 if variant == 'uniform_cost'
+              else heuristic(board, goal_state, size))
+    heapq.heappush(open_set, (g_cost + h_cost, h_cost, g_cost,
+                              next(counter), board))
     max_states = len(open_set) + len(closed_set)
     while open_set:
         try:
             _expand_board(open_set, closed_set, size, heuristic, goal_state,
-                          came_from)
+                          came_from, variant)
         except GoalReached as reached:
             goal_board = reached.args[0]
             break
