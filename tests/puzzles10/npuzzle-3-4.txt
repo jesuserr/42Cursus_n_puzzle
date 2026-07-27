@@ -1,5 +1,0 @@
-#non-solvable (2 inversions -> even to odd)
-3
-1 2 3
-4 5 0
-8 7 6
