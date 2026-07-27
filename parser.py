@@ -47,8 +47,8 @@ def parse_arguments():
 
 # Parse an n-puzzle file: line 0 is a comment, line 1 is the size,
 # followed by `size` rows of `size` space-separated integers covering
-# 0..size*size-1 exactly once. A row may end with one '#' token, dropped as
-# a comment; more than one breaks the `size` count and is rejected.
+# 0..size*size-1 exactly once. On a row, everything from the first '#' to the
+# end of the line is dropped as a comment.
 # Returns (size, flat list of ints). Raises ValueError on any problem, format
 # errors and OSError alike, so callers only ever catch ValueError.
 def read_puzzle_file(filename):
@@ -68,9 +68,7 @@ def read_puzzle_file(filename):
             raise ValueError(f"File '{filename}' not valid n-puzzle file.")
         puzzle = []
         for line in contents_list[HEADER_LINES:]:
-            numbers = line.split()
-            if numbers and numbers[-1].startswith('#'):
-                numbers = numbers[:-1]
+            numbers = line.split('#', 1)[0].split()
             if len(numbers) != size:
                 raise ValueError(f"File '{filename}' not valid n-puzzle file.")
             puzzle += numbers

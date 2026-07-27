@@ -4,28 +4,49 @@ import re
 import sys
 
 
+# Read the size x size grid printed right after `label`, returned as a flat
+# list. Cells are right-aligned to a common width, so each line is stripped
+# before splitting. Blank lines ahead of the grid are skipped; anything that
+# is not a row of integers once the grid has started ends it.
+def read_grid(text, label, size):
+    parts = text.split(label, 1)
+    if len(parts) < 2:
+        raise ValueError(f"output is missing '{label}'")
+    rows = []
+    for line in parts[1].splitlines():
+        line = line.strip()
+        if re.fullmatch(r"\d+(\s+\d+)*", line):
+            rows.append([int(n) for n in line.split()])
+            if len(rows) == size:
+                return [cell for row in rows for cell in row]
+        elif rows:
+            break
+    raise ValueError(f"'{label}' is not followed by a {size}x{size} grid")
+
+
 # Parse an n_puzzle output file, returning the declared size, the initial and
 # goal states (as flat lists) and the ordered list of boards that make up the
 # solution sequence (each board a flat list of size * size ints).
 def parse_output(text):
     size_match = re.search(r"Puzzle size:\s*(\d+)\s*x\s*(\d+)", text)
-    initial_match = re.search(r"Initial state:\s*\[([^\]]*)\]", text)
-    goal_match = re.search(r"Goal state:\s*\[([^\]]*)\]", text)
     moves_match = re.search(r"Number of moves:\s*(\d+)", text)
-    if not (size_match and initial_match and goal_match and moves_match):
-        raise ValueError("output is missing size, initial, goal or move count")
+    if not (size_match and moves_match):
+        raise ValueError("output is missing puzzle size or move count")
 
     size = int(size_match.group(1))
     if int(size_match.group(2)) != size:
         raise ValueError("puzzle is not square")
-    initial = [int(n) for n in initial_match.group(1).split(",")]
-    goal = [int(n) for n in goal_match.group(1).split(",")]
+    initial = read_grid(text, "Initial state:", size)
+    goal = read_grid(text, "Goal state:", size)
     reported_moves = int(moves_match.group(1))
 
     # The boards live between the "Solution sequence" header and the trailing
     # statistics. Every line made only of integers is a board row; blank lines
     # separate boards. Group rows into boards of size rows each.
-    body = text.split("Solution sequence (initial -> goal):", 1)[1]
+    header = "Solution sequence (initial -> goal):"
+    if header not in text:
+        raise ValueError(f"output is missing '{header}'")
+    body = text.split(header, 1)[1]
     body = body.split("Number of moves:", 1)[0]
     rows = []
     for line in body.splitlines():

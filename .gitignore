@@ -222,7 +222,7 @@ claude/main.py
 claude/PLAN.md
 claude/puzzle.py
 claude/solver.py
-board*
 annotations/solvability_algorithm.md
 annotations/solvability_study.md
 docs/astar.md
+subject/ng_algo_n-puzzle.pdf
