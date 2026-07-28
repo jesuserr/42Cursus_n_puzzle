@@ -8,7 +8,8 @@ FILE_MIN_LINES = HEADER_LINES + MIN_SIZE    # header + 3 rows
 
 def parse_arguments():
     arg_parser = argparse.ArgumentParser(
-        usage="python3 n-puzzle.py [board] [-h] [-r size] [-hf heuristic]",
+        usage="python3 n-puzzle.py [board] [-h] [-r size] [-hf heuristic] "
+              "[-av variant] [-gs goal_state]",
         description="Solves N-puzzle using A* search algorithm:\n"
                     "- with no arguments reads puzzle from default file\n"
                     "  'board' and applies default Manhattan distance\n"
@@ -19,7 +20,9 @@ def parse_arguments():
                     "  function instead of the default Manhattan distance\n"
                     "  heuristic function\n"
                     "- with -av <variant> uses the specified algorithm\n"
-                    "  variant instead of the default A* search variant",
+                    "  variant instead of the default A* search variant\n"
+                    "- with -gs <goal_state> uses the specified goal state\n"
+                    "  instead of the default snail goal state",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     arg_parser.add_argument('board', nargs='?', default='board')
@@ -37,6 +40,12 @@ def parse_arguments():
                             default='a_star',
                             help="use specified <variant> of the algorithm: "
                                  "'a_star', 'greedy' or 'uniform_cost'")
+    arg_parser.add_argument('-gs',
+                            choices=['snail', 'top_left', 'bottom_right'],
+                            metavar='<goal_state>', dest='goal_state',
+                            default='snail',
+                            help="use specified <goal_state>: 'snail', "
+                                 "'top_left' or 'bottom_right'")
     args = arg_parser.parse_args()
     if args.random is not None and args.random < MIN_SIZE:
         print(f"Size must be at least {MIN_SIZE} for a valid n-puzzle "

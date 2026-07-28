@@ -33,10 +33,22 @@ def build_snail_goal(size):
     return snail_board_goal
 
 
+# Return the goal board for `goal_name`: 'top_left' places the blank first
+# followed by tiles 1..size*size-1 in reading order, 'bottom_right' the same
+# order with the blank last, and 'snail' (the fall-through default) the
+# clockwise inward spiral. The choice of goal decides which boards are
+# solvable, so a board that reaches one goal may be unreachable from another.
+def build_goal_state(size, goal_name):
+    if goal_name == 'top_left':
+        return list(range(size * size))
+    elif goal_name == 'bottom_right':
+        return list(range(1, size * size)) + [0]
+    return build_snail_goal(size)
+
+
 # Shuffle a board of the given size until it's solvable against the
-# snail goal state. Returns (size, board, goal_state).
-def generate_random_puzzle(size):
-    goal_state = build_snail_goal(size)
+# `goal_state` received. Returns (size, board).
+def generate_random_puzzle(size, goal_state):
     print(f'Generating random [{size}x{size}] solvable puzzle ', end='')
     print(end='', flush=True)
     board = list(range(size * size))
@@ -44,4 +56,4 @@ def generate_random_puzzle(size):
     while not check_puzzle_solvability(size, board, goal_state):
         random.shuffle(board)
     print(f'{PASS_MARK}')
-    return size, board, goal_state
+    return size, board

@@ -2,7 +2,7 @@ import sys
 from solvability import check_puzzle_solvability
 from parser import parse_arguments, read_puzzle_file
 from constants import PASS_MARK, FAIL_MARK
-from generator import generate_random_puzzle, build_snail_goal
+from generator import generate_random_puzzle, build_goal_state
 from heuristics import hamming_distance, manhattan_distance, linear_conflict
 from solver import solve_puzzle
 from exceptions import NoSolutionFound
@@ -16,13 +16,14 @@ from prints import print_initial_state, print_solution
 def setup_puzzle(args):
     if args.random is None:
         size, board = read_puzzle_file(args.board)
-        goal_state = build_snail_goal(size)
+        goal_state = build_goal_state(size, args.goal_state)
         if not check_puzzle_solvability(size, board, goal_state):
             print(f"Puzzle is NOT solvable {FAIL_MARK} ")
             sys.exit(1)
         print(f"Puzzle is solvable {PASS_MARK} ")
     else:
-        size, board, goal_state = generate_random_puzzle(args.random)
+        goal_state = build_goal_state(args.random, args.goal_state)
+        size, board = generate_random_puzzle(args.random, goal_state)
     if args.heuristic == 'hamming':
         heuristic = hamming_distance
     elif args.heuristic == 'manhattan':
