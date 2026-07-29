@@ -37,7 +37,7 @@ def _print_board(state, size):
 # state), the time complexity (total states selected from the open set) and
 # the size complexity (peak number of states held in memory at once).
 def print_solution(final_path, size, time_complexity, size_complexity):
-    print(" PUZZLE SOLUTION ".center(BANNER_WIDTH, "*"))
+    print("\r" + " PUZZLE SOLUTION ".center(BANNER_WIDTH, "*"))
     print(f"Solution found {PASS_MARK}")
     print("Solution sequence (initial -> goal):")
     for state in final_path:

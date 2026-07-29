@@ -4,6 +4,8 @@ from constants import FAIL_MARK
 from exceptions import GoalReached, NoSolutionFound
 from prints import print_solution
 counter = count()
+# Number of explored states between refreshes of the search progress line.
+PROGRESS_INTERVAL = 50000
 
 
 # Rebuild the solution as an ordered list of boards from start to goal.
@@ -112,6 +114,8 @@ def solve_puzzle(size, board, goal_state, heuristic, variant):
             goal_board = reached.args[0]
             break
         max_states = max(max_states, len(open_set) + len(closed_set))
+        if len(closed_set) % PROGRESS_INTERVAL == 0:
+            print(f"\rExplored states: {len(closed_set)}", end="  ")
     else:
         raise NoSolutionFound(f"No solution found {FAIL_MARK} ")
     max_states = max(max_states, len(open_set) + len(closed_set))

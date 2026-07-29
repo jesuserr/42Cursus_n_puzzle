@@ -8,7 +8,7 @@ FILE_MIN_LINES = HEADER_LINES + MIN_SIZE    # header + 3 rows
 
 def parse_arguments():
     arg_parser = argparse.ArgumentParser(
-        usage="python3 n-puzzle.py [board] [-h] [-r size] [-hf heuristic] "
+        usage="python3 n_puzzle.py [board] [-h] [-r size] [-hf heuristic] "
               "[-av variant] [-gs goal_state]",
         description="Solves N-puzzle using A* search algorithm:\n"
                     "- with no arguments reads puzzle from default file\n"
