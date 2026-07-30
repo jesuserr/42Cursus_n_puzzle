@@ -5,7 +5,7 @@ from constants import PASS_MARK, FAIL_MARK
 from generator import generate_random_puzzle, build_goal_state
 from heuristics import hamming_distance, manhattan_distance, linear_conflict
 from solver import solve_puzzle
-from exceptions import NoSolutionFound
+from exceptions import MemoryLimitExceeded, NoSolutionFound
 from prints import print_initial_state, print_solution
 
 
@@ -42,7 +42,7 @@ def main():
             print_solution([board], size, 0, 1)
             sys.exit(0)
         solve_puzzle(size, board, goal_state, heuristic, args.variant)
-    except (ValueError, NoSolutionFound) as error:
+    except (ValueError, NoSolutionFound, MemoryLimitExceeded) as error:
         print(f"{error}")
         sys.exit(1)
     except KeyboardInterrupt:

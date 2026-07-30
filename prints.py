@@ -43,6 +43,6 @@ def print_solution(final_path, size, time_complexity, size_complexity):
     for state in final_path:
         _print_board(state, size)
         print()
-    print(f"Number of moves:                        {len(final_path) - 1}")
-    print(f"Time complexity (states selected):      {time_complexity}")
-    print(f"Size complexity (max states in memory): {size_complexity}")
+    print(f"Number of moves:                        {len(final_path) - 1:,}")
+    print(f"Time complexity (states selected):      {time_complexity:,}")
+    print(f"Size complexity (max states in memory): {size_complexity:,}")

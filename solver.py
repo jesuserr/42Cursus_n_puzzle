@@ -2,10 +2,11 @@ import heapq
 from itertools import count
 from constants import FAIL_MARK
 from exceptions import GoalReached, NoSolutionFound
+from memory import check_memory
 from prints import print_solution
 counter = count()
 # Number of explored states between refreshes of the search progress line.
-PROGRESS_INTERVAL = 50000
+PROGRESS_INTERVAL = 25000
 
 
 # Rebuild the solution as an ordered list of boards from start to goal.
@@ -115,9 +116,12 @@ def solve_puzzle(size, board, goal_state, heuristic, variant):
             break
         max_states = max(max_states, len(open_set) + len(closed_set))
         if len(closed_set) % PROGRESS_INTERVAL == 0:
-            print(f"\rExplored states: {len(closed_set)}", end="  ")
+            used, budget, percent = check_memory()
+            print(f"\rExplored {len(closed_set):>11,}  │  Memory "
+                  f"{used >> 10:>5,}/{budget >> 10:,} MiB ({percent:>5.1f}%)",
+                  end="")
     else:
-        raise NoSolutionFound(f"No solution found {FAIL_MARK} ")
+        raise NoSolutionFound(f"\nNo solution found {FAIL_MARK} ")
     max_states = max(max_states, len(open_set) + len(closed_set))
     final_path = _reconstruct_path(came_from, goal_board)
     print_solution(final_path, size, len(closed_set), max_states)
