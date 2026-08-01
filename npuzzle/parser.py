@@ -7,13 +7,13 @@ FILE_MIN_LINES = HEADER_LINES + MIN_SIZE    # header + 3 rows
 
 
 # Define the command line and return the parsed arguments: an optional board
-# path defaulting to 'board', plus -r, -hf, -av and -gs, whose accepted values
-# argparse enforces on its own. Only the -r lower bound is checked here, since
-# type=int takes any integer, including sizes too small to be a puzzle.
+# path defaulting to 'board', plus -r, -hf, -av, -gs and -t, whose accepted
+# values argparse enforces on its own. Only the -r lower bound is checked here,
+# since type=int takes any integer, including sizes too small to be a puzzle.
 def parse_arguments():
     arg_parser = argparse.ArgumentParser(
         usage="python3 n_puzzle.py [board] [-h] [-r size] [-hf heuristic] "
-              "[-av variant] [-gs goal_state]",
+              "[-av variant] [-gs goal_state] [-t]",
         description="Solves N-puzzle using A* search algorithm:\n"
                     "- with no arguments reads puzzle from default file\n"
                     "  'board' and applies default Manhattan distance\n"
@@ -26,7 +26,9 @@ def parse_arguments():
                     "- with -av <variant> uses the specified algorithm\n"
                     "  variant instead of the default A* search variant\n"
                     "- with -gs <goal_state> uses the specified goal state\n"
-                    "  instead of the default snail goal state",
+                    "  instead of the default snail goal state\n"
+                    "- with -t adds how long the search took and how many\n"
+                    "  states it got through per second to the results",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     arg_parser.add_argument('board', nargs='?', default='board')
@@ -50,6 +52,8 @@ def parse_arguments():
                             default='snail',
                             help="use specified <goal_state>: 'snail', "
                                  "'top_left' or 'bottom_right'")
+    arg_parser.add_argument('-t', action='store_true', dest='timing',
+                            help='report the duration and speed of the search')
     args = arg_parser.parse_args()
     if args.random is not None and args.random < MIN_SIZE:
         print(f"Size must be at least {MIN_SIZE} for a valid n-puzzle "

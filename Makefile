@@ -22,9 +22,9 @@ help:
 	@echo '  help     show this message'
 	@echo
 	@echo 'Solver flags: [board] [-r <size>] [-hf <heuristic>]'
-	@echo '              [-av <variant>] [-gs <goal_state>]'
+	@echo '              [-av <variant>] [-gs <goal_state>] [-t]'
 	@echo 'Examples:'
-	@echo '  make run ARGS="tests/4x4_solvable -hf linear"'
+	@echo '  make run ARGS="tests/4x4_solvable -hf linear -t"'
 	@echo '  make run ARGS="-r 3 -av greedy -gs top_left"'
 	@echo '  make test TESTBOARD=tests/4x4_solvable'
 	@echo

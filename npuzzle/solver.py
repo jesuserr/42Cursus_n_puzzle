@@ -1,4 +1,5 @@
 import heapq
+import time
 from itertools import count
 from npuzzle.constants import FAIL_MARK
 from npuzzle.exceptions import GoalReached, NoSolutionFound
@@ -103,8 +104,9 @@ def _expand_board(open_set, closed_set, size, heuristic, goal_state,
 # unreachable, which the while else reports. max_states follows the peak of
 # open_set + closed_set, and every PROGRESS_INTERVAL explored boards
 # check_memory refreshes the progress line, or aborts if the process is close
-# to filling the memory it can still reach. Ends by printing the rebuilt path.
-def solve_puzzle(size, board, goal_state, heuristic, variant):
+# to filling the memory it can still reach. The clock brackets the search
+# alone, leaving the printing out of it. Ends by printing the rebuilt path.
+def solve_puzzle(size, board, goal_state, heuristic, variant, timing):
     open_set = []
     closed_set = set()
     came_from = {tuple(board): None}
@@ -114,12 +116,14 @@ def solve_puzzle(size, board, goal_state, heuristic, variant):
     heapq.heappush(open_set, (g_cost + h_cost, h_cost, g_cost,
                               next(counter), board))
     max_states = len(open_set) + len(closed_set)
+    start_time = time.perf_counter()
     while open_set:
         try:
             _expand_board(open_set, closed_set, size, heuristic, goal_state,
                           came_from, variant)
         except GoalReached as reached:
             goal_board = reached.args[0]
+            elapsed_time = time.perf_counter() - start_time if timing else None
             break
         max_states = max(max_states, len(open_set) + len(closed_set))
         if len(closed_set) % PROGRESS_INTERVAL == 0:
@@ -131,4 +135,4 @@ def solve_puzzle(size, board, goal_state, heuristic, variant):
         raise NoSolutionFound(f"\nNo solution found {FAIL_MARK} ")
     max_states = max(max_states, len(open_set) + len(closed_set))
     final_path = _reconstruct_path(came_from, goal_board)
-    print_solution(final_path, size, len(closed_set), max_states)
+    print_solution(final_path, size, len(closed_set), max_states, elapsed_time)

@@ -41,8 +41,10 @@ def _print_board(state, size):
 # "Initial:" or "Step N:" and drawn as a size x size square, the number of
 # moves (path length minus the initial state), the time complexity (total
 # states selected from the open set) and the size complexity (peak number of
-# states held in memory at once).
-def print_solution(final_path, size, time_complexity, size_complexity):
+# states held in memory at once). elapsed_time, None unless -t asked for it,
+# adds the duration of the search and the states selected per second.
+def print_solution(final_path, size, time_complexity, size_complexity,
+                   elapsed_time):
     print("\r" + " PUZZLE SOLUTION ".center(BANNER_WIDTH, "*"))
     print(f"Solution found {PASS_MARK}")
     print("Solution sequence (initial -> goal):")
@@ -53,3 +55,7 @@ def print_solution(final_path, size, time_complexity, size_complexity):
     print(f"Number of moves:                        {len(final_path) - 1:,}")
     print(f"Time complexity (states selected):      {time_complexity:,}")
     print(f"Size complexity (max states in memory): {size_complexity:,}")
+    if elapsed_time is not None and elapsed_time > 0:
+        print(f"Search time:                            {elapsed_time:,.5f} s")
+        speed = time_complexity / elapsed_time
+        print(f"States selected per second:             {speed:,.0f}")
