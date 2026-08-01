@@ -3,6 +3,15 @@
 import re
 import sys
 
+# A printed board row: tiles are digits and the blank is an underscore.
+ROW = r"[\d_]+(\s+[\d_]+)*"
+
+
+# Turn one printed row into ints, mapping the blank back to the 0 the solver
+# stores internally.
+def parse_row(line):
+    return [0 if cell == "_" else int(cell) for cell in line.split()]
+
 
 # Read the size x size grid printed right after `label`, returned as a flat
 # list. Cells are right-aligned to a common width, so each line is stripped
@@ -15,8 +24,8 @@ def read_grid(text, label, size):
     rows = []
     for line in parts[1].splitlines():
         line = line.strip()
-        if re.fullmatch(r"\d+(\s+\d+)*", line):
-            rows.append([int(n) for n in line.split()])
+        if re.fullmatch(ROW, line):
+            rows.append(parse_row(line))
             if len(rows) == size:
                 return [cell for row in rows for cell in row]
         elif rows:
@@ -53,9 +62,9 @@ def parse_output(text):
         line = line.strip()
         if not line:
             continue
-        if not re.fullmatch(r"(\d+\s*)+", line):
+        if not re.fullmatch(ROW, line):
             continue
-        rows.append([int(n) for n in line.split()])
+        rows.append(parse_row(line))
 
     if len(rows) % size != 0:
         raise ValueError(f"row count {len(rows)} is not a multiple "

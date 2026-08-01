@@ -97,6 +97,13 @@ def _expand_board(open_set, closed_set, size, heuristic, goal_state,
                            goal_state, size, g_cost, open_set, variant)
 
 
+# Drive the search: seed open_set with the start board, scored by the variant
+# like any other, then expand boards one at a time until _consider_neighbor
+# raises GoalReached. An open_set emptied without that raise means the goal is
+# unreachable, which the while else reports. max_states follows the peak of
+# open_set + closed_set, and every PROGRESS_INTERVAL explored boards
+# check_memory refreshes the progress line, or aborts if the process is close
+# to filling the memory it can still reach. Ends by printing the rebuilt path.
 def solve_puzzle(size, board, goal_state, heuristic, variant):
     open_set = []
     closed_set = set()

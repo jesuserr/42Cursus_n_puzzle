@@ -34,6 +34,12 @@ def setup_puzzle(args):
     return size, board, goal_state, heuristic
 
 
+# Entry point: build the puzzle from the command line, print the setup header
+# and hand it to the search. A board already on its goal is answered directly,
+# since solve_puzzle only reports a goal it reaches through a move. This is the
+# single place errors become an exit status: a bad file or option, an
+# unreachable goal and the memory abort all print their own message and exit 1,
+# while Ctrl-C exits 130, the shell convention for death by SIGINT.
 def main():
     args = parse_arguments()
     try:

@@ -6,6 +6,10 @@ HEADER_LINES = 2                            # comment line + size line
 FILE_MIN_LINES = HEADER_LINES + MIN_SIZE    # header + 3 rows
 
 
+# Define the command line and return the parsed arguments: an optional board
+# path defaulting to 'board', plus -r, -hf, -av and -gs, whose accepted values
+# argparse enforces on its own. Only the -r lower bound is checked here, since
+# type=int takes any integer, including sizes too small to be a puzzle.
 def parse_arguments():
     arg_parser = argparse.ArgumentParser(
         usage="python3 n_puzzle.py [board] [-h] [-r size] [-hf heuristic] "
