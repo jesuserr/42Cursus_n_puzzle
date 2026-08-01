@@ -1,6 +1,6 @@
 import resource
-from constants import FAIL_MARK
-from exceptions import MemoryLimitExceeded
+from npuzzle.constants import FAIL_MARK
+from npuzzle.exceptions import MemoryLimitExceeded
 # Percentage of the reachable memory the search may hold before aborting.
 MEMORY_LIMIT = 80
 

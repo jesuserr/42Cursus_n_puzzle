@@ -1,4 +1,4 @@
-from constants import PASS_MARK
+from npuzzle.constants import PASS_MARK
 # Total width, in characters, of the asterisk banners framing the output.
 BANNER_WIDTH = 60
 

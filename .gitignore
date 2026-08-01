@@ -217,12 +217,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 notas
-claude/IMPLEMENTATION.md
-claude/main.py
-claude/PLAN.md
-claude/puzzle.py
-claude/solver.py
-annotations/solvability_algorithm.md
-annotations/solvability_study.md
-docs/astar.md
+claude/*
+annotations/*
 subject/ng_algo_n-puzzle.pdf

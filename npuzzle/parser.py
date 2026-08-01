@@ -1,6 +1,6 @@
 import argparse
 import sys
-from constants import PASS_MARK, FAIL_MARK
+from npuzzle.constants import PASS_MARK, FAIL_MARK
 MIN_SIZE = 3                                # 3x3 smallest legal n-puzzle
 HEADER_LINES = 2                            # comment line + size line
 FILE_MIN_LINES = HEADER_LINES + MIN_SIZE    # header + 3 rows

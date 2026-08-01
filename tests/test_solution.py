@@ -58,7 +58,8 @@ def parse_output(text):
         rows.append([int(n) for n in line.split()])
 
     if len(rows) % size != 0:
-        raise ValueError(f"row count {len(rows)} is not a multiple of size {size}")
+        raise ValueError(f"row count {len(rows)} is not a multiple "
+                         f"of size {size}")
     boards = []
     for i in range(0, len(rows), size):
         board = [cell for row in rows[i:i + size] for cell in row]
@@ -82,7 +83,8 @@ def is_single_move(prev, curr, size):
     # One of the two changed cells must be the blank in each board, and the two
     # cells must be adjacent (same row & adjacent columns, or same column &
     # adjacent rows). The swap must move the blank between the two positions.
-    if not ((prev[a] == 0 and curr[b] == 0) or (prev[b] == 0 and curr[a] == 0)):
+    if not ((prev[a] == 0 and curr[b] == 0)
+            or (prev[b] == 0 and curr[a] == 0)):
         return False
     if prev[a] != curr[b] or prev[b] != curr[a]:
         return False
@@ -101,9 +103,11 @@ def verify(text):
 
     for i, board in enumerate(boards):
         if len(board) != size * size:
-            errors.append(f"board {i} has {len(board)} tiles, expected {size * size}")
+            errors.append(f"board {i} has {len(board)} tiles, "
+                          f"expected {size * size}")
         elif not is_valid_board(board, size):
-            errors.append(f"board {i} is not a valid permutation of 0..{size * size - 1}")
+            errors.append(f"board {i} is not a valid permutation "
+                          f"of 0..{size * size - 1}")
 
     if boards[0] != initial:
         errors.append("first board does not match the declared initial state")
@@ -112,11 +116,13 @@ def verify(text):
 
     for i in range(1, len(boards)):
         if not is_single_move(boards[i - 1], boards[i], size):
-            errors.append(f"transition {i - 1} -> {i} is not a single legal move")
+            errors.append(f"transition {i - 1} -> {i} is not a single "
+                          f"legal move")
 
     actual_moves = len(boards) - 1
     if actual_moves != reported_moves:
-        errors.append(f"reported {reported_moves} moves but sequence has {actual_moves}")
+        errors.append(f"reported {reported_moves} moves but sequence "
+                      f"has {actual_moves}")
 
     return errors
 

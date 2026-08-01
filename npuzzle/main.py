@@ -1,12 +1,13 @@
 import sys
-from solvability import check_puzzle_solvability
-from parser import parse_arguments, read_puzzle_file
-from constants import PASS_MARK, FAIL_MARK
-from generator import generate_random_puzzle, build_goal_state
-from heuristics import hamming_distance, manhattan_distance, linear_conflict
-from solver import solve_puzzle
-from exceptions import MemoryLimitExceeded, NoSolutionFound
-from prints import print_initial_state, print_solution
+from npuzzle.solvability import check_puzzle_solvability
+from npuzzle.parser import parse_arguments, read_puzzle_file
+from npuzzle.constants import PASS_MARK, FAIL_MARK
+from npuzzle.generator import generate_random_puzzle, build_goal_state
+from npuzzle.heuristics import (hamming_distance, manhattan_distance,
+                                linear_conflict)
+from npuzzle.solver import solve_puzzle
+from npuzzle.exceptions import MemoryLimitExceeded, NoSolutionFound
+from npuzzle.prints import print_initial_state, print_solution
 
 
 # Build the initial board/goal_state from a file or -r random generation,

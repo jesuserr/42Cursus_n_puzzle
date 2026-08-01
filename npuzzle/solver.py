@@ -1,9 +1,9 @@
 import heapq
 from itertools import count
-from constants import FAIL_MARK
-from exceptions import GoalReached, NoSolutionFound
-from memory import check_memory
-from prints import print_solution
+from npuzzle.constants import FAIL_MARK
+from npuzzle.exceptions import GoalReached, NoSolutionFound
+from npuzzle.memory import check_memory
+from npuzzle.prints import print_solution
 counter = count()
 # Number of explored states between refreshes of the search progress line.
 PROGRESS_INTERVAL = 25000

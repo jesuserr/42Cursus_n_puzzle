@@ -1,6 +1,6 @@
 import random
-from solvability import check_puzzle_solvability
-from constants import PASS_MARK
+from npuzzle.solvability import check_puzzle_solvability
+from npuzzle.constants import PASS_MARK
 
 
 # Build the goal state: numbers 1..size*size-1 spiraling clockwise
