@@ -44,7 +44,8 @@ def main():
     args = parse_arguments()
     try:
         size, board, goal_state, heuristic = setup_puzzle(args)
-        print_initial_state(size, board, goal_state, heuristic, args.variant)
+        print_initial_state(size, board, goal_state, heuristic, args.variant,
+                            args.goal_state)
         if board == goal_state:
             print_solution([board], size, 0, 1, None)
             sys.exit(0)

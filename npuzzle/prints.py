@@ -9,18 +9,19 @@ BLANK_CELL = '_'
 # the starting board, the goal board, the search variant and which heuristic
 # is in use. board and goal_state are drawn as size x size grids. Uniform cost
 # ignores the heuristic, so in that variant it is reported as None.
-def print_initial_state(size, board, goal_state, heuristic, variant):
+def print_initial_state(size, board, goal_state, heuristic, variant,
+                        goal_type):
     print("\n" + " PUZZLE SETUP ".center(BANNER_WIDTH, "*"))
     print(f"Puzzle size:   {size} x {size}\n")
     print("Initial state:")
     _print_board(board, size)
-    print("\nGoal state:")
+    print(f"\nGoal state ({goal_type.replace('_', ' ').title()}):")
     _print_board(goal_state, size)
-    print(f"\nVariant:       {variant}")
+    print(f"\nVariant:       {variant.title().replace('_', ' ')}")
     if variant == 'uniform_cost':
         print("Heuristic:     None (uniform cost search)")
     else:
-        print(f"Heuristic:     {heuristic.__name__}")
+        print(f"Heuristic:     {heuristic.__name__.title().replace('_', ' ')}")
     print()
 
 

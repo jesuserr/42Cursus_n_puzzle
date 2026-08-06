@@ -3,6 +3,9 @@ MAIN      := n_puzzle.py
 # Same program as MAIN, reached as a module so pdb starts inside the solver
 # instead of stopping on the launcher's import line.
 DEBUG_MAIN := npuzzle.main
+# Verifies the sequence MAIN printed really solves the puzzle.
+# CHECKER   := tests/test_solution.py (old version, now replaced by checker.py)
+CHECKER   := tests/checker.py
 # Arguments forwarded to the solver, e.g. make run ARGS="-r 4 -hf linear".
 ARGS      ?=
 # Board `make test` solves before checking the printed sequence is legal.
@@ -45,7 +48,7 @@ debug:
 # the declared goal. The output file is kept only for the length of the run.
 test:
 	@$(PYTHON) $(MAIN) $(TESTBOARD) > $(TESTOUT)
-	@$(PYTHON) tests/test_solution.py $(TESTOUT)
+	@$(PYTHON) $(CHECKER) $(TESTOUT)
 	@rm -f $(TESTOUT)
 
 # Caches and generated output only; board files and tests are left alone.

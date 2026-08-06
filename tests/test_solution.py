@@ -46,7 +46,7 @@ def parse_output(text):
     if int(size_match.group(2)) != size:
         raise ValueError("puzzle is not square")
     initial = read_grid(text, "Initial state:", size)
-    goal = read_grid(text, "Goal state:", size)
+    goal = read_grid(text, "Goal state", size)
     reported_moves = int(moves_match.group(1))
 
     # The boards live between the "Solution sequence" header and the trailing
