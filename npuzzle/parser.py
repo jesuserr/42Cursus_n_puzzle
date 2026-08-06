@@ -4,16 +4,19 @@ from npuzzle.constants import PASS_MARK, FAIL_MARK
 MIN_SIZE = 3                                # 3x3 smallest legal n-puzzle
 HEADER_LINES = 2                            # comment line + size line
 FILE_MIN_LINES = HEADER_LINES + MIN_SIZE    # header + 3 rows
+FRAME_DELAY = 0.50                          # seconds between animated frames
 
 
 # Define the command line and return the parsed arguments: an optional board
-# path defaulting to 'board', plus -r, -hf, -av, -gs and -t, whose accepted
-# values argparse enforces on its own. Only the -r lower bound is checked here,
-# since type=int takes any integer, including sizes too small to be a puzzle.
+# path defaulting to 'board', plus -r, -hf, -av, -gs, -t and -as, whose
+# accepted values argparse enforces on its own. Only the -r and -as lower
+# bounds are checked here, since type=int and type=float take any number,
+# including sizes too small to be a puzzle and negative delays, which
+# time.sleep rejects.
 def parse_arguments():
     arg_parser = argparse.ArgumentParser(
         usage="python3 n_puzzle.py [board] [-h] [-r size] [-hf heuristic] "
-              "[-av variant] [-gs goal_state] [-t]",
+              "[-av variant] [-gs goal_state] [-t] [-as [delay]]",
         description="Solves N-puzzle using A* search algorithm:\n"
                     "- with no arguments reads puzzle from default file\n"
                     "  'board' and applies default Manhattan distance\n"
@@ -28,7 +31,9 @@ def parse_arguments():
                     "- with -gs <goal_state> uses the specified goal state\n"
                     "  instead of the default snail goal state\n"
                     "- with -t adds how long the search took and how many\n"
-                    "  states it got through per second to the results",
+                    "  states it got through per second to the results\n"
+                    "- with -as replays the solution as an animated sequence\n"
+                    "  updated every [delay] seconds",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     arg_parser.add_argument('board', nargs='?', default='board')
@@ -54,10 +59,17 @@ def parse_arguments():
                                  "'top_left' or 'bottom_right'")
     arg_parser.add_argument('-t', action='store_true', dest='timing',
                             help='report the duration and speed of the search')
+    arg_parser.add_argument('-as', nargs='?', type=float, metavar='<delay>',
+                            dest='animation', const=FRAME_DELAY,
+                            help='animate the solution, one board every '
+                                 f'<delay> seconds (default {FRAME_DELAY})')
     args = arg_parser.parse_args()
     if args.random is not None and args.random < MIN_SIZE:
         print(f"Size must be at least {MIN_SIZE} for a valid n-puzzle "
               f"{FAIL_MARK}")
+        sys.exit(1)
+    if args.animation is not None and args.animation < 0:
+        print(f"Animation delay cannot be negative {FAIL_MARK}")
         sys.exit(1)
     return args
 

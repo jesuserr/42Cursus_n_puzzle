@@ -106,7 +106,8 @@ def _expand_board(open_set, closed_set, size, heuristic, goal_state,
 # check_memory refreshes the progress line, or aborts if the process is close
 # to filling the memory it can still reach. The clock brackets the search
 # alone, leaving the printing out of it. Ends by printing the rebuilt path.
-def solve_puzzle(size, board, goal_state, heuristic, variant, timing):
+def solve_puzzle(size, board, goal_state, heuristic, variant, timing,
+                 animation):
     open_set = []
     closed_set = set()
     came_from = {tuple(board): None}
@@ -135,4 +136,5 @@ def solve_puzzle(size, board, goal_state, heuristic, variant, timing):
         raise NoSolutionFound(f"\nNo solution found {FAIL_MARK} ")
     max_states = max(max_states, len(open_set) + len(closed_set))
     final_path = _reconstruct_path(came_from, goal_board)
-    print_solution(final_path, size, len(closed_set), max_states, elapsed_time)
+    print_solution(final_path, size, len(closed_set), max_states,
+                   elapsed_time, animation)

@@ -47,10 +47,10 @@ def main():
         print_initial_state(size, board, goal_state, heuristic, args.variant,
                             args.goal_state)
         if board == goal_state:
-            print_solution([board], size, 0, 1, None)
+            print_solution([board], size, 0, 1, None, None)
             sys.exit(0)
         solve_puzzle(size, board, goal_state, heuristic, args.variant,
-                     args.timing)
+                     args.timing, args.animation)
     except (ValueError, NoSolutionFound, MemoryLimitExceeded) as error:
         print(f"{error}")
         sys.exit(1)
