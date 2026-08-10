@@ -53,7 +53,8 @@ def _animate_solution(final_path, size, delay):
         if i:
             time.sleep(delay)
             print(CURSOR_UP.format(size + 1), end="")
-        print(f"{'Initial:' if i == 0 else f'Step {i}:'}{ERASE_LINE}")
+        label = "Initial:" if i == 0 else f"Step {i}/{len(final_path) - 1}:"
+        print(f"{label}{ERASE_LINE}")
         _print_board(state, size)
     print()
 
